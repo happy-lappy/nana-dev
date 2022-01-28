@@ -37,14 +37,13 @@ jobs:
         continue-on-error: true
         run: |
           cd nana-dev
-          pip3 install -r requirements.txt
-#          pip3 install Pyrogram
-#          python3 -m bsbz
+          pip3 install Pyrogram
+          python3 -m bsbz
       - name: Quality Control
         run: |
-#          git clone https://github.com/${GITHUB_REPOSITORY} lupo
-#          cd lupo || exit 1
-#          echo $(( RANDOM - ( RANDOM % RANDOM ) )) > buildid.txt
-#          git add buildid.txt
-#          git commit -m "Building [$(date -u +%D-%T%P)]"
-#          git push -q "https://${{ secrets.GH_TOK }}@github.com/${GITHUB_REPOSITORY}" HEAD:main || exit 1
+          git clone https://github.com/${GITHUB_REPOSITORY} lupo
+          cd lupo || exit 1
+          echo $(( RANDOM - ( RANDOM % RANDOM ) )) > buildid.txt
+          git add buildid.txt
+          git commit -m "Building [$(date -u +%D-%T%P)]"
+          git push -q "https://${{ secrets.GH_TOK }}@github.com/${GITHUB_REPOSITORY}" HEAD:main || exit 1
