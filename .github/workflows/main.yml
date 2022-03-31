@@ -21,8 +21,6 @@ jobs:
         uses: actions/setup-python@v2.2.2
         with:
           python-version: '3.8'
-      - name: Setup FFm
-        uses: FedericoCarboni/setup-ffmpeg@v1
       - name: Gather repo
         run: |
           git clone "https://${{ secrets.GH_TOK }}@github.com/happy-lappy/nana-bot" nana-dev || exit 1
@@ -31,19 +29,20 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.pythonLocation }}
-          key: "nana"
+          key: "nanadev"
       - name: Build wheels
         timeout-minutes: 330
         continue-on-error: true
         run: |
           cd nana-dev
-          pip3 install Pyrogram
-          python3 -m bsbz
+          pip3 install -r requirements.txt
+#          pip3 install Pyrogram
+#          python3 -m bsbz
       - name: Quality Control
         run: |
-          git clone https://github.com/${GITHUB_REPOSITORY} lupo
-          cd lupo || exit 1
-          echo $(( RANDOM - ( RANDOM % RANDOM ) )) > buildid.txt
-          git add buildid.txt
-          git commit -m "Building [$(date -u +%D-%T%P)]"
-          git push -q "https://${{ secrets.GH_TOK }}@github.com/${GITHUB_REPOSITORY}" HEAD:main || exit 1
+#          git clone https://github.com/${GITHUB_REPOSITORY} lupo
+#          cd lupo || exit 1
+#          echo $(( RANDOM - ( RANDOM % RANDOM ) )) > buildid.txt
+#          git add buildid.txt
+#          git commit -m "Building [$(date -u +%D-%T%P)]"
+#          git push -q "https://${{ secrets.GH_TOK }}@github.com/${GITHUB_REPOSITORY}" HEAD:main || exit 1
