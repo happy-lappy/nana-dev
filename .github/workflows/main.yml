@@ -35,7 +35,7 @@ jobs:
         continue-on-error: true
         run: |
           cd nana-dev
-          pip3 install Pyrogram
+          pip3 install Pyrogram==1.4.16
           python3 -m bsbz
       - name: Quality Control
         run: |
