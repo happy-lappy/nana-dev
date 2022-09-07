@@ -10,7 +10,7 @@ env:
   GitHubName: "happy-lappy"
 
 jobs:
-  akodevelop:
+  nanadevelop:
     runs-on: ubuntu-20.04
     steps:
       - name: "Checkout"
