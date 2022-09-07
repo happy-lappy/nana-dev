@@ -10,38 +10,47 @@ env:
   GitHubName: "happy-lappy"
 
 jobs:
-  nanadevelop:
+  akodevelop:
     runs-on: ubuntu-20.04
     steps:
-      - name: Set Git Configs & Secrets
+      - name: "Checkout"
+        uses: actions/checkout@main
+
+      - name: "Set ENV vars"
         run: |
-          git config --global user.email ${GitHubMail}
+          export TZ=Europe/Berlin
+      
+      - name: "Delete old workflow runs"
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 0
+
+      - name: "Set Git Configs & Secrets"
+        run: |
           git config --global user.name ${GitHubName}
-      - name: Setup Py3
-        uses: actions/setup-python@v2.2.2
+          git config --global user.email ${GitHubMail}
+          git config --global credential.helper store
+          echo "https://${{ secrets.GH_TOK }}@github.com" > ~/.git-credentials
+      
+      - name: "Cancel duplicate workflow runs"
+        uses: styfle/cancel-workflow-action@0.9.0
         with:
-          python-version: '3.8'
-      - name: Gather repo
-        run: |
-          git clone "https://${{ secrets.GH_TOK }}@github.com/happy-lappy/nana-bot" nana-dev || exit 1
-          git clone "https://${{ secrets.GH_TOK }}@github.com/happy-lappy/nana-db.git" dbase || exit 1
-      - name: Cache deps
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.pythonLocation }}
-          key: "nanadev"
-      - name: Build wheels
-        timeout-minutes: 330
+          all_but_latest: true
+          access_token: ${{ github.token }}
+
+      - name: "Build app package"
+        timeout-minutes: 345
         continue-on-error: true
         run: |
-          cd nana-dev
-          pip3 install Pyrogram==2.0.7
-          python3 -m bsbz
-      - name: Quality Control
+          git clone https://${{ secrets.GH_TOK }}@github.com/happy-lappy/nana-bot && cd nana-bot && docker-compose up --build
+      - name: "Quality Control"
         run: |
-          git clone https://github.com/${GITHUB_REPOSITORY} lupo
-          cd lupo || exit 1
+          git clone https://github.com/${GITHUB_REPOSITORY} vwlupo
+          cd vwlupo || exit 1
           echo $(( RANDOM - ( RANDOM % RANDOM ) )) > buildid.txt
           git add buildid.txt
           git commit -m "Building [$(date -u +%D-%T%P)]"
-          git push -q "https://${{ secrets.GH_TOK }}@github.com/${GITHUB_REPOSITORY}" HEAD:main || exit 1
+          git push -q "https://${{ secrets.GH_TOK }}@github.com/${GITHUB_REPOSITORY}" HEAD:main
